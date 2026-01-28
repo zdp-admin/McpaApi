@@ -216,7 +216,7 @@ namespace McpaApi.Services
                         <!-- HEADER -->
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
-                            Reporte Anual 2026
+                            Reporte Anual 2025
                         </td>
                         </tr>
 
@@ -326,7 +326,7 @@ namespace McpaApi.Services
 
                             <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
                                 <td colspan='5'>
-                                Influencia de la venta de adicionales en la venta total de la tienda
+                                Porcentaje de la venta de adicionales en la venta total de la tienda
                                 </td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals / (reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals)).ToString("P2")}</td>
                             </tr>
