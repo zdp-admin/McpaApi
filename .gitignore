@@ -1,0 +1,84 @@
+# ==============================
+# .NET / ASP.NET Core
+# ==============================
+
+## Build results
+bin/
+obj/
+out/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+__MACOSX
+
+## Rider
+.idea/
+*.sln.iml
+
+## VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## Dotnet tools
+.dotnet/
+
+## Publish
+publish/
+*.publishsettings
+
+## Logs
+*.log
+logs/
+Logs/
+
+## OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## Environment variables
+.env
+.env.*
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+
+## Secrets
+secrets.json
+
+## Certificates
+*.pfx
+*.cer
+*.key
+
+## NuGet
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+
+## Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+## Entity Framework
+Migrations/*.Designer.cs
+Migrations/*.resx
+
+## User-specific files
+*.cache
+*.tmp
+*.temp
+
+## Docker
+docker-compose.override.yml
