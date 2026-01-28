@@ -143,6 +143,58 @@ namespace McpaApi.Services
             await Task.Delay(1000);
         }
 
+        public async Task<ReportSalesYear> ReportAnual()
+        {
+            _logger.LogInformation("Iniciando ReportAnual a las {Time}", DateTime.Now);
+
+            try
+            {
+                var today = new DateOnly(2025, 12, 31);
+                //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
+                var initDate = new DateOnly(today.Year, 1, 1);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
+
+                ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.AguaAzul,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+                ReportSalesYear resultPuntoSur = _puntoSurService.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.PuntoSur,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+                ReportSalesYear resultPatria = _service.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.Garage,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+
+
+                var html = "";
+
+                /*await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas",
+                    html,
+                    ["garage290mx@gmail.com", "cord@garage290.mx"]
+                );*/
+                
+                _logger.LogInformation("ReportYearJob completado correctamente");
+
+                return resultPuntoSur;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en ReportYearJob");
+                throw;
+            }
+        }
+
         private string GenerateHtml(List<ReportSocialSale> todayResult, List<ReportSocialSale> monthResult)
         {
             var today = DateTime.Now;
@@ -491,7 +543,6 @@ namespace McpaApi.Services
             objectives.Add("Cristian Sanchez", [742000,742000,742000,838000,838000,838000,838000,742000,838000,838000,646000,838000]);
             objectives.Add("Barbara Sandoval", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
             
-            double objective = 730000;
             var totalObjective = 0; //objective * sellers.Count();
 
             html += @$"<td>{sumTotal.ToString("C", new CultureInfo("es-Mx"))}</td>

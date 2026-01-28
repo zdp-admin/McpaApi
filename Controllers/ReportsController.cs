@@ -99,6 +99,13 @@ namespace McpaApi.Controllers
       return Ok(true);
     }
 
+    [HttpGet("YearSellerJob")]
+    public async Task<IActionResult> YearSellerJob()
+    {
+      await _reportService.ReportAnual();
+      return Ok(true);
+    }
+
     [HttpPost("LealtadJob")]
     public async Task<IActionResult> LealtadJob()
     {
