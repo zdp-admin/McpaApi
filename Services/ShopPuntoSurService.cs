@@ -169,29 +169,25 @@ namespace McpaApi.Services
         else
         {
           result.TotalSalesWithoutAdditionals += sale.Total;
-          if (result.SalesWithoutAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
-          {
-            result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Select(s =>
-            {
-              if (s.Seller == $"{sale.User.Name} {sale.User.LastName}")
-              {
-                s.Orders += 1;
-                s.TotalSales += sale.Total;
-                s.AvgTicket = s.TotalSales / s.Orders;
-              }
+          var sellerName = $"{sale.User.Name} {sale.User.LastName}";
+          var seller = result.SalesWithoutAdditionals.FirstOrDefault(s => s.Seller == sellerName);
 
-              return s;
-            });
+          if (seller != null)
+          {
+              seller.Orders++;
+              seller.TotalSales += sale.Total;
+              seller.AvgTicket = seller.TotalSales / seller.Orders;
           }
           else
           {
-            result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Append(new SellerSalesWithOutAdditional()
-            {
-              Seller = $"{sale.User.Name} {sale.User.LastName}",
-              Orders = 1,
-              TotalSales = sale.Total,
-              AvgTicket = 0
-            });
+              result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Append(
+                  new SellerSalesWithOutAdditional
+                  {
+                      Seller = sellerName,
+                      Orders = 1,
+                      TotalSales = sale.Total,
+                      AvgTicket = 0 // o 0, según tu regla de negocio
+                  });
           }
         }
       }
