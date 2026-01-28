@@ -131,27 +131,25 @@ namespace McpaApi.Services
 
         result.Orders += 1;
 
+        var sellerName = $"{sale.User.Name} {sale.User.LastName}";
         var isAditional = sale.ParentId != null;
         if (isAditional)
         {
           result.OrdersWithAdditionals += 1;
           result.TotalSalesWithAdditionals += sale.Total;
-          if (result.SalesWithAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
-          {
-            result.SalesWithAdditionals = result.SalesWithAdditionals.Select(s =>
-            {
-              var totalOrder = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == s.Seller).FirstOrDefault()?.Orders ?? 0;
-              if (s.Seller == $"{sale.User.Name} {sale.User.LastName}")
-              {
-                s.Orders += 1;
-                s.ExtraProducts += sale.SaleElements.Count();
-                s.TotalAdditional += sale.Total;
-                s.AvgTicket = s.TotalAdditional / s.Orders;
-                s.PercentPenetration = (double)s.Orders / (s.Orders + totalOrder) * 100;
-              }
+          var seller = result.SalesWithAdditionals.FirstOrDefault(s => s.Seller == sellerName);
 
-              return s;
-            });
+
+          if (seller != null)
+          {
+            var totalOrder = result.SalesWithoutAdditionals?.Sum(sw => sw.Orders) ?? 0;
+            var totalSaleOrdes = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == seller.Seller).FirstOrDefault()?.Orders ?? 0;
+
+            seller.Orders++;
+            seller.ExtraProducts += sale.SaleElements.Count();
+            seller.TotalAdditional += sale.Total;
+            seller.AvgTicket = seller.TotalAdditional / seller.Orders;
+            seller.PercentPenetration = (double)seller.Orders / (totalSaleOrdes - totalOrder) * 100;
           }
           else
           {
@@ -169,8 +167,7 @@ namespace McpaApi.Services
         else
         {
           result.TotalSalesWithoutAdditionals += sale.Total;
-          var sellerName = $"{sale.User.Name} {sale.User.LastName}";
-          var seller = result.SalesWithoutAdditionals.FirstOrDefault(s => s.Seller == sellerName);
+          var seller = result.SalesWithoutAdditionals!.FirstOrDefault(s => s.Seller == sellerName);
 
           if (seller != null)
           {
@@ -180,7 +177,7 @@ namespace McpaApi.Services
           }
           else
           {
-              result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Append(
+              result.SalesWithoutAdditionals = result.SalesWithoutAdditionals!.Append(
                   new SellerSalesWithOutAdditional
                   {
                       Seller = sellerName,
