@@ -149,7 +149,7 @@ namespace McpaApi.Services
             seller.ExtraProducts += sale.SaleElements.Count();
             seller.TotalAdditional += sale.Total;
             seller.AvgTicket = seller.TotalAdditional / seller.Orders;
-            seller.PercentPenetration = (double)seller.Orders / (totalSaleOrdes - totalOrder) * 100;
+            seller.PercentPenetration = (double)seller.Orders / (totalOrder - totalSaleOrdes) * 100;
           }
           else
           {
@@ -183,7 +183,7 @@ namespace McpaApi.Services
                       Seller = sellerName,
                       Orders = 1,
                       TotalSales = sale.Total,
-                      AvgTicket = 0 // o 0, según tu regla de negocio
+                      AvgTicket = sale.Total / 1 // o 0, según tu regla de negocio
                   });
           }
         }
