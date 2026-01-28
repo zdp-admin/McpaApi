@@ -321,9 +321,9 @@ namespace McpaApi.Services
                                 <td>PUNTO SUR</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{reportSalesYear.PercentPenetrationTotal.ToString("F2")}%</td>
-                                <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
+                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("F2")}%</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithoutAdditionals.ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
 
                             <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
