@@ -319,7 +319,7 @@ namespace McpaApi.Services
                                 <td>PUNTO SUR</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("F2")}%</td>
+                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("P2")}%</td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
@@ -328,7 +328,7 @@ namespace McpaApi.Services
                                 <td colspan='5'>
                                 Influencia de la venta de adicionales en la venta total de la tienda
                                 </td>
-                                <td align='right'>{((reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals) / reportSalesYear.TotalSalesWithAdditionals).ToString("P2")}</td>
+                                <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals / (reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals)).ToString("P2")}</td>
                             </tr>
                             </table>
                         </td>
