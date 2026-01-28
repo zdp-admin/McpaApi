@@ -289,7 +289,7 @@ namespace McpaApi.Services
                             <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
                                 <td>Total</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.Orders)}</td>
-                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts)}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.TotalAdditional).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.AvgTicket).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.PercentPenetration).ToString("F2")}%</td>
@@ -319,7 +319,7 @@ namespace McpaApi.Services
                                 <td>PUNTO SUR</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("P2")}%</td>
+                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("F2")}</td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
