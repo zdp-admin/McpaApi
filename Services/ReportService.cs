@@ -177,31 +177,25 @@ namespace McpaApi.Services
                 var htmlPuntoSur = this.GenerateYearHtml(resultPuntoSur, "PUNTO SUR");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025",
+                    "molina@garage290.mx",
+                    "Reporte de ventas anual 2025 PUNTO SUR",
                     htmlPuntoSur
-                    //["garage290mx@gmail.com", "cord@garage290.mx"]
                 );
 
                 var htmlAguaAzul = this.GenerateYearHtml(resultAguaAzul, "AGUA AZUL");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025",
+                    "molina@garage290.mx",
+                    "Reporte de ventas anual 2025 AGUA AZUL",
                     htmlAguaAzul
-                    //["garage290mx@gmail.com", "cord@garage290.mx"]
                 );
 
                 var htmlPatria = this.GenerateYearHtml(resultPatria, "PATRIA");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025",
+                    "molina@garage290.mx",
+                    "Reporte de ventas anual 2025 PATRIA",
                     htmlPatria
-                    //["garage290mx@gmail.com", "cord@garage290.mx"]
                 );
                 
                 _logger.LogInformation("ReportYearJob completado correctamente");
