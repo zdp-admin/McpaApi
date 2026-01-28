@@ -244,7 +244,6 @@ namespace McpaApi.Services
                                     <td align='right'>Venta Sin Adicionales</td>
                                     <td align='right'>Ticket Promedio</td>
                                     </tr>";
-                                    
                                     foreach (var item in reportSalesYear.SalesWithoutAdditionals)
                                     {
                                         html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.TotalSales.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td></tr>";
@@ -252,9 +251,9 @@ namespace McpaApi.Services
 
                                     html += @$"<tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
                                     <td>TOTAL</td>
-                                    <td align='right'>900</td>
-                                    <td align='right'>$900,000</td>
-                                    <td align='right'>$1,000</td>
+                                    <td align='right'>{reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders)}</td>
+                                    <td align='right'>{reportSalesYear.SalesWithoutAdditionals.Sum(x => x.TotalSales).ToString("C")}</td>
+                                    <td align='right'>{(reportSalesYear.SalesWithoutAdditionals.Sum(x => x.TotalSales) / reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders)).ToString("C")}</td>
                                     </tr>
                                 </table>
                                 </td>
@@ -278,23 +277,22 @@ namespace McpaApi.Services
                                 <td align='right'>Venta Total</td>
                                 <td align='right'>Ticket Promedio</td>
                                 <td align='right'>% Penetración</td>
-                            </tr>
+                            </tr>";
 
-                            <tr><td>Barbie</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Cristian</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Pepe</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Esaú</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Óscar</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Leo</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
-                            <tr><td>Ashley</td><td align='right'>0</td><td align='right'>0</td><td align='right'>$0</td><td align='right'>$0</td><td align='right'>0%</td></tr>
+                           foreach (var item in reportSalesYear.SalesWithAdditionals)
+                            {
+                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts.ToString("C")}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
+                            } 
 
+
+                            html += @$"
                             <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
                                 <td>Total</td>
-                                <td align='right'>18</td>
-                                <td align='right'>25</td>
-                                <td align='right'>$26,060</td>
-                                <td align='right'>$3,149</td>
-                                <td align='right'>2.10%</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.Orders)}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.TotalAdditional).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.AvgTicket).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.PercentPenetration).ToString("F2")}%</td>
                             </tr>
                             </table>
                         </td>
@@ -319,18 +317,18 @@ namespace McpaApi.Services
 
                             <tr>
                                 <td>PUNTO SUR</td>
-                                <td align='right'>900</td>
-                                <td align='right'>18</td>
-                                <td align='right'>2.00%</td>
-                                <td align='right'>$900,000</td>
-                                <td align='right'>$26,060</td>
+                                <td align='right'>{reportSalesYear.Orders}</td>
+                                <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
+                                <td align='right'>{reportSalesYear.PercentPenetrationTotal.ToString("F2")}%</td>
+                                <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.TotalSalesWithoutAdditionals.ToString("C")}</td>
                             </tr>
 
                             <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
                                 <td colspan='5'>
                                 Influencia de la venta de adicionales en la venta total de la tienda
                                 </td>
-                                <td align='right'>2.90%</td>
+                                <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals / reportSalesYear.TotalSalesWithoutAdditionals).ToString("P2")}</td>
                             </tr>
                             </table>
                         </td>
