@@ -125,78 +125,71 @@ namespace McpaApi.Services
         var invoiceIsCancel = payed?.Cancelado == 1;
         var pending = payed?.Pendiente > 10;
 
-        if (payed == null)
+        if (payed == null || invoiceIsCancel || pending)
         {
           continue;
         }
 
+        result.Orders += 1;
+
+        var sellerName = $"{sale.User.Name} {sale.User.LastName}";
         var isAditional = sale.ParentId != null;
         if (isAditional)
         {
-          if (result.SalesWithAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
-          {
-            result.SalesWithAdditionals = result.SalesWithAdditionals.Select(s =>
-            {
-              var totalOrder = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == s.Seller).FirstOrDefault()?.Orders ?? 0;
-              if (s.Seller == $"{sale.User.Name} {sale.User.LastName}")
-              {
-                s.Orders += 1;
-                s.ExtraProducts += sale.SaleElements.Count();
-                s.TotalAdditional += sale.Total;
-                s.AvgTicket = s.TotalAdditional / s.Orders;
-                s.PercentPenetration = (double)s.Orders / (s.Orders + totalOrder) * 100;
-              }
+          result.OrdersWithAdditionals += 1;
+          result.TotalSalesWithAdditionals += sale.Total;
+          var seller = result.SalesWithAdditionals.FirstOrDefault(s => s.Seller == sellerName);
 
-              return s;
-            });
+
+          if (seller != null)
+          {
+            var totalOrder = result.SalesWithoutAdditionals?.Sum(sw => sw.Orders) ?? 0;
+            var totalSaleOrdes = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == seller.Seller).FirstOrDefault()?.Orders ?? 0;
+
+            seller.Orders++;
+            seller.ExtraProducts += sale.SaleElements.Count();
+            seller.TotalAdditional += sale.Total;
+            seller.AvgTicket = seller.TotalAdditional / seller.Orders;
+            seller.PercentPenetration = (double)seller.Orders / (totalOrder - totalSaleOrdes) * 100;
           }
           else
           {
             result.SalesWithAdditionals = result.SalesWithAdditionals.Append(new SellerSalesWithAdditional()
             {
               Seller = $"{sale.User.Name} {sale.User.LastName}",
-              Orders = 0,
-              ExtraProducts = 0,
-              TotalAdditional = 0,
-              AvgTicket = 0,
+              Orders = 1,
+              ExtraProducts = sale.SaleElements.Count(),
+              TotalAdditional = sale.Total,
+              AvgTicket = sale.Total,
               PercentPenetration = 0
             });
           }
         }
         else
         {
-          if (result.SalesWithoutAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
-          {
-            result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Select(s =>
-            {
-              if (s.Seller == $"{sale.User.Name} {sale.User.LastName}")
-              {
-                s.Orders += 1;
-                s.TotalSales += sale.Total;
-                s.AvgTicket = s.TotalSales / s.Orders;
-              }
+          result.TotalSalesWithoutAdditionals += sale.Total;
+          var seller = result.SalesWithoutAdditionals!.FirstOrDefault(s => s.Seller == sellerName);
 
-              return s;
-            });
+          if (seller != null)
+          {
+              seller.Orders++;
+              seller.TotalSales += sale.Total;
+              seller.AvgTicket = seller.TotalSales / seller.Orders;
           }
           else
           {
-            result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Append(new SellerSalesWithOutAdditional()
-            {
-              Seller = $"{sale.User.Name} {sale.User.LastName}",
-              Orders = 0,
-              TotalSales = 0,
-              AvgTicket = 0
-            });
+              result.SalesWithoutAdditionals = result.SalesWithoutAdditionals!.Append(
+                  new SellerSalesWithOutAdditional
+                  {
+                      Seller = sellerName,
+                      Orders = 1,
+                      TotalSales = sale.Total,
+                      AvgTicket = sale.Total / 1 // o 0, según tu regla de negocio
+                  });
           }
         }
       }
-
-      result.Orders = sales.Count();
-      result.OrdersWithAdditionals = sales.Where(s => s.ParentId != null).Count();
       result.PercentPenetrationTotal = result.Orders > 0 ? (double)result.OrdersWithAdditionals / result.Orders * 100 : 0;
-      result.TotalSalesWithAdditionals = sales.Where(s => s.ParentId != null).Sum(s => s.Total);
-      result.TotalSalesWithoutAdditionals = sales.Where(s => s.ParentId == null).Sum(s => s.Total);
 
       return result;
     }

@@ -174,13 +174,33 @@ namespace McpaApi.Services
                 });
 
 
-                var html = this.GenerateYearHtml(resultPuntoSur);
+                var htmlPuntoSur = this.GenerateYearHtml(resultPuntoSur, "PUNTO SUR");
 
                 await _emailService.SendEmailAsync(
                     //"molina@garage290.mx",
                     "juan_rivera99@hotmail.com",
                     "Reporte de ventas anual 2025",
-                    html//,
+                    htmlPuntoSur
+                    //["garage290mx@gmail.com", "cord@garage290.mx"]
+                );
+
+                var htmlAguaAzul = this.GenerateYearHtml(resultAguaAzul, "AGUA AZUL");
+
+                await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas anual 2025",
+                    htmlAguaAzul
+                    //["garage290mx@gmail.com", "cord@garage290.mx"]
+                );
+
+                var htmlPatria = this.GenerateYearHtml(resultPatria, "PATRIA");
+
+                await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas anual 2025",
+                    htmlPatria
                     //["garage290mx@gmail.com", "cord@garage290.mx"]
                 );
                 
@@ -195,7 +215,7 @@ namespace McpaApi.Services
             }
         }
 
-        private string GenerateYearHtml(ReportSalesYear reportSalesYear)
+        private string GenerateYearHtml(ReportSalesYear reportSalesYear, string company)
         {
             var html = @$"
                 <!DOCTYPE html>
@@ -229,7 +249,7 @@ namespace McpaApi.Services
                                 <div style='font-size:13px;color:#6b7280;'>VENTA TOTAL DE TIENDA</div>
                                 <div style='font-size:26px;font-weight:bold;margin:10px 0;'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</div>
                                 <img src='https://www.garage290.mx/wp-content/uploads/2026/01/favicon-garage290.png' width='120' style='display:block;margin:10px auto;'>
-                                <div style='font-size:14px;font-weight:bold;'>PUNTO SUR</div>
+                                <div style='font-size:14px;font-weight:bold;'>{company}</div>
                                 </td>
 
                                 <td width='70%' style='padding:10px;'>
@@ -316,7 +336,7 @@ namespace McpaApi.Services
                             </tr>
 
                             <tr>
-                                <td>PUNTO SUR</td>
+                                <td>{company}</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
                                 <td align='right'>{((decimal)reportSalesYear.OrdersWithAdditionals / (decimal)reportSalesYear.Orders).ToString("P2")}</td>
