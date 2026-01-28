@@ -129,9 +129,13 @@ namespace McpaApi.Services
           continue;
         }
 
+        result.Orders += 1;
+
         var isAditional = sale.ParentId != null;
         if (isAditional)
         {
+          result.OrdersWithAdditionals += 1;
+          result.TotalSalesWithAdditionals += sale.Total;
           if (result.SalesWithAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
           {
             result.SalesWithAdditionals = result.SalesWithAdditionals.Select(s =>
@@ -154,16 +158,17 @@ namespace McpaApi.Services
             result.SalesWithAdditionals = result.SalesWithAdditionals.Append(new SellerSalesWithAdditional()
             {
               Seller = $"{sale.User.Name} {sale.User.LastName}",
-              Orders = 0,
-              ExtraProducts = 0,
-              TotalAdditional = 0,
-              AvgTicket = 0,
+              Orders = 1,
+              ExtraProducts = sale.SaleElements.Count(),
+              TotalAdditional = sale.Total,
+              AvgTicket = sale.Total,
               PercentPenetration = 0
             });
           }
         }
         else
         {
+          result.TotalSalesWithoutAdditionals += sale.Total;
           if (result.SalesWithoutAdditionals.Any(s => s.Seller == $"{sale.User.Name} {sale.User.LastName}"))
           {
             result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Select(s =>
@@ -183,19 +188,14 @@ namespace McpaApi.Services
             result.SalesWithoutAdditionals = result.SalesWithoutAdditionals.Append(new SellerSalesWithOutAdditional()
             {
               Seller = $"{sale.User.Name} {sale.User.LastName}",
-              Orders = 0,
-              TotalSales = 0,
+              Orders = 1,
+              TotalSales = sale.Total,
               AvgTicket = 0
             });
           }
         }
       }
-
-      result.Orders = sales.Count();
-      result.OrdersWithAdditionals = sales.Where(s => s.ParentId != null).Count();
       result.PercentPenetrationTotal = result.Orders > 0 ? (double)result.OrdersWithAdditionals / result.Orders * 100 : 0;
-      result.TotalSalesWithAdditionals = sales.Where(s => s.ParentId != null).Sum(s => s.Total);
-      result.TotalSalesWithoutAdditionals = sales.Where(s => s.ParentId == null).Sum(s => s.Total);
 
       return result;
     }
