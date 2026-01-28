@@ -328,7 +328,7 @@ namespace McpaApi.Services
                                 <td colspan='5'>
                                 Influencia de la venta de adicionales en la venta total de la tienda
                                 </td>
-                                <td align='right'>{((reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals) / reportSalesYear.TotalSalesWithoutAdditionals).ToString("P2")}</td>
+                                <td align='right'>{((reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals) / reportSalesYear.TotalSalesWithAdditionals).ToString("P2")}</td>
                             </tr>
                             </table>
                         </td>
