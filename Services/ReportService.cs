@@ -281,7 +281,7 @@ namespace McpaApi.Services
 
                            foreach (var item in reportSalesYear.SalesWithAdditionals)
                             {
-                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts.ToString("C")}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
+                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
                             } 
 
 
@@ -319,7 +319,7 @@ namespace McpaApi.Services
                                 <td>PUNTO SUR</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("F2")}</td>
+                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("P2")}</td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
