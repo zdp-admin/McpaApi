@@ -319,7 +319,7 @@ namespace McpaApi.Services
                                 <td>PUNTO SUR</td>
                                 <td align='right'>{reportSalesYear.Orders}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("P4")}</td>
+                                <td align='right'>{reportSalesYear.OrdersWithAdditionals} / {reportSalesYear.Orders} = {(reportSalesYear.OrdersWithAdditionals / reportSalesYear.Orders).ToString("P2")}</td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
