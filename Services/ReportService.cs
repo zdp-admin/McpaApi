@@ -325,15 +325,15 @@ namespace McpaApi.Services
                                 <td align='right'>Órdenes Generadas</td>
                                 <td align='right'>Órdenes con Adicionales</td>
                                 <td align='right'>% Penetración</td>
-                                <td align='right'>Venta Total</td>
+                                <td align='right'>Venta Total de Tienda</td>
                                 <td align='right'>Venta Adicionales</td>
                             </tr>
 
                             <tr>
                                 <td>{company}</td>
-                                <td align='right'>{reportSalesYear.Orders}</td>
+                                <td align='right'>{reportSalesYear.Orders - reportSalesYear.OrdersWithAdditionals}</td>
                                 <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
-                                <td align='right'>{((decimal)reportSalesYear.OrdersWithAdditionals / (decimal)reportSalesYear.Orders).ToString("P2")}</td>
+                                <td align='right'>{((decimal)reportSalesYear.OrdersWithAdditionals / (decimal)(reportSalesYear.Orders - reportSalesYear.OrdersWithAdditionals)).ToString("P2")}</td>
                                 <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
                             </tr>
