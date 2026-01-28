@@ -124,7 +124,7 @@ namespace McpaApi.Services
         var invoiceIsCancel = payed?.Cancelado == 1;
         var pending = payed?.Pendiente > 10;
 
-        if (payed == null)
+        if (payed == null || invoiceIsCancel || pending)
         {
           continue;
         }
