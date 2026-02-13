@@ -209,6 +209,74 @@ namespace McpaApi.Services
             }
         }
 
+        public async Task<ReportSalesYear> ReportMonth()
+        {
+            _logger.LogInformation("Iniciando Reporte Mensual a las {Time}", DateTime.Now);
+
+            try
+            {
+                var today = new DateOnly(2026, 1, 31);
+                //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
+                var initDate = new DateOnly(2026, 1, 1);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
+
+                ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.AguaAzul,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+                ReportSalesYear resultPuntoSur = _puntoSurService.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.PuntoSur,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+                ReportSalesYear resultPatria = _service.SalesYearReport(new Models.Dto.DownloadReportSale()
+                {
+                    WebSite = WebSite.Garage,
+                    StartDate = initDate,
+                    EndDate = today
+                });
+
+
+                var htmlPuntoSur = this.GenerateYearHtml(resultPuntoSur, "PUNTO SUR");
+
+                await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas anual 2025 PUNTO SUR",
+                    htmlPuntoSur
+                );
+
+                var htmlAguaAzul = this.GenerateYearHtml(resultAguaAzul, "AGUA AZUL");
+
+                await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas anual 2025 AGUA AZUL",
+                    htmlAguaAzul
+                );
+
+                var htmlPatria = this.GenerateYearHtml(resultPatria, "PATRIA");
+
+                await _emailService.SendEmailAsync(
+                    //"molina@garage290.mx",
+                    "juan_rivera99@hotmail.com",
+                    "Reporte de ventas anual 2025 PATRIA",
+                    htmlPatria
+                );
+                
+                _logger.LogInformation("ReportMonth completado correctamente");
+
+                return resultPuntoSur;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en ReportMonth");
+                throw;
+            }
+        }
         private string GenerateYearHtml(ReportSalesYear reportSalesYear, string company)
         {
             var html = @$"
@@ -721,7 +789,7 @@ namespace McpaApi.Services
             html += @$"<td>{sumTotal.ToString("C", new CultureInfo("es-Mx"))}</td>
                 </tr>
                 <tr>
-                    <td>Objectivo</td>
+                    <td>Objetivo</td>
                 ";
 
             foreach (var item in sellers)
