@@ -240,30 +240,30 @@ namespace McpaApi.Services
                 });
 
 
-                var htmlPuntoSur = this.GenerateYearHtml(resultPuntoSur, "PUNTO SUR");
+                var htmlPuntoSur = this.GenerateMonthHtml(resultPuntoSur, "PUNTO SUR");
 
                 await _emailService.SendEmailAsync(
                     //"molina@garage290.mx",
                     "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025 PUNTO SUR",
+                    "Reporte de ventas Mensual Enero PUNTO SUR",
                     htmlPuntoSur
                 );
 
-                var htmlAguaAzul = this.GenerateYearHtml(resultAguaAzul, "AGUA AZUL");
+                var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL");
 
                 await _emailService.SendEmailAsync(
                     //"molina@garage290.mx",
                     "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025 AGUA AZUL",
+                    "Reporte de ventas Mensual Enero AGUA AZUL",
                     htmlAguaAzul
                 );
 
-                var htmlPatria = this.GenerateYearHtml(resultPatria, "PATRIA");
+                var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA");
 
                 await _emailService.SendEmailAsync(
                     //"molina@garage290.mx",
                     "juan_rivera99@hotmail.com",
-                    "Reporte de ventas anual 2025 PATRIA",
+                    "Reporte de ventas Mensual Enero PATRIA",
                     htmlPatria
                 );
                 
@@ -299,6 +299,165 @@ namespace McpaApi.Services
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
                             Reporte Anual 2025
+                        </td>
+                        </tr>
+
+                        <!-- RESUMEN GENERAL -->
+                        <tr>
+                        <td style='padding:20px;'>
+                            <table width='100%' cellpadding='0' cellspacing='0'>
+                            <tr>
+                                <td width='30%' align='center' style='padding:10px;border-right:1px solid #e5e7eb;'>
+                                <div style='font-size:13px;color:#6b7280;'>VENTA TOTAL DE TIENDA</div>
+                                <div style='font-size:26px;font-weight:bold;margin:10px 0;'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</div>
+                                <img src='https://www.garage290.mx/wp-content/uploads/2026/01/favicon-garage290.png' width='120' style='display:block;margin:10px auto;'>
+                                <div style='font-size:14px;font-weight:bold;'>{company}</div>
+                                </td>
+
+                                <td width='70%' style='padding:10px;'>
+                                <div style='font-size:14px;font-weight:bold;margin-bottom:10px;'>
+                                    Venta de órdenes generadas
+                                </div>
+
+                                <table width='100%' cellpadding='6' cellspacing='0' style='border-collapse:collapse;font-size:12px;'>
+                                    <tr style='background-color:#f3f4f6;font-weight:bold;'>
+                                    <td>Asesor</td>
+                                    <td align='right'>Órdenes Generadas</td>
+                                    <td align='right'>Venta Sin Adicionales</td>
+                                    <td align='right'>Ticket Promedio</td>
+                                    </tr>";
+                                    foreach (var item in reportSalesYear.SalesWithoutAdditionals)
+                                    {
+                                        html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.TotalSales.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td></tr>";
+                                    }
+
+                                    html += @$"<tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
+                                    <td>TOTAL</td>
+                                    <td align='right'>{reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders)}</td>
+                                    <td align='right'>{reportSalesYear.SalesWithoutAdditionals.Sum(x => x.TotalSales).ToString("C")}</td>
+                                    <td align='right'>{(reportSalesYear.SalesWithoutAdditionals.Sum(x => x.TotalSales) / reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders)).ToString("C")}</td>
+                                    </tr>
+                                </table>
+                                </td>
+                            </tr>
+                            </table>
+                        </td>
+                        </tr>
+
+                        <!-- ADICIONALES -->
+                        <tr>
+                        <td style='padding:20px;'>
+                            <div style='font-size:16px;font-weight:bold;margin-bottom:10px;'>
+                            Estadísticas de Venta de Adicionales
+                            </div>
+
+                            <table width='100%' cellpadding='6' cellspacing='0' style='border-collapse:collapse;font-size:12px;'>
+                            <tr style='background-color:#f3f4f6;font-weight:bold;'>
+                                <td>Asesor</td>
+                                <td align='right'>Órdenes con Adicionales</td>
+                                <td align='right'>Productos Extras</td>
+                                <td align='right'>Venta Total</td>
+                                <td align='right'>Ticket Promedio</td>
+                                <td align='right'>% Penetración</td>
+                            </tr>";
+
+                           foreach (var item in reportSalesYear.SalesWithAdditionals)
+                            {
+                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
+                            } 
+
+
+                            html += @$"
+                            <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
+                                <td>Total</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.Orders)}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts)}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.TotalAdditional).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.AvgTicket).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.PercentPenetration).ToString("F2")}%</td>
+                            </tr>
+                            </table>
+                        </td>
+                        </tr>
+
+                        <!-- RESUMEN TIENDA -->
+                        <tr>
+                        <td style='padding:20px;'>
+                            <div style='font-size:16px;font-weight:bold;margin-bottom:10px;'>
+                            Resumen Tienda
+                            </div>
+
+                            <table width='100%' cellpadding='6' cellspacing='0' style='border-collapse:collapse;font-size:12px;'>
+                            <tr style='background-color:#f3f4f6;font-weight:bold;'>
+                                <td>Tienda</td>
+                                <td align='right'>Órdenes Generadas</td>
+                                <td align='right'>Órdenes con Adicionales</td>
+                                <td align='right'>% Penetración</td>
+                                <td align='right'>Venta Total de Tienda</td>
+                                <td align='right'>Venta Adicionales</td>
+                            </tr>
+
+                            <tr>
+                                <td>{company}</td>
+                                <td align='right'>{reportSalesYear.Orders - reportSalesYear.OrdersWithAdditionals}</td>
+                                <td align='right'>{reportSalesYear.OrdersWithAdditionals}</td>
+                                <td align='right'>{((decimal)reportSalesYear.OrdersWithAdditionals / (decimal)(reportSalesYear.Orders - reportSalesYear.OrdersWithAdditionals)).ToString("P2")}</td>
+                                <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals).ToString("C")}</td>
+                                <td align='right'>{reportSalesYear.TotalSalesWithAdditionals.ToString("C")}</td>
+                            </tr>
+
+                            <tr style='font-weight:bold;border-top:1px solid #e5e7eb;'>
+                                <td colspan='5'>
+                                Porcentaje de la venta de adicionales en la venta total de la tienda
+                                </td>
+                                <td align='right'>{(reportSalesYear.TotalSalesWithAdditionals / (reportSalesYear.TotalSalesWithAdditionals + reportSalesYear.TotalSalesWithoutAdditionals)).ToString("P2")}</td>
+                            </tr>
+                            </table>
+                        </td>
+                        </tr>
+
+                        <!-- FOOTER -->
+                        <tr>
+                        <td style='background-color:#f9fafb;padding:14px;font-size:12px;color:#6b7280;text-align:center;'>
+                            © 2026 Garage290 · Reporte automático
+                        </td>
+                        </tr>
+
+                    </table>
+
+                    </td>
+                </tr>
+                </table>
+
+                </body>
+                </html>
+            ";
+
+            return html;
+        }
+
+        private string GenerateMonthHtml(ReportSalesYear reportSalesYear, string company)
+        {
+            var html = @$"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset='UTF-8'>
+                <title>Reporte Mensual</title>
+                </head>
+                <body style='margin:0;padding:0;background-color:#f4f4f4;font-family:Arial, Helvetica, sans-serif;'>
+
+                <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f4f4f4;padding:20px;'>
+                <tr>
+                    <td align='center'>
+
+                    <!-- CONTENEDOR -->
+                    <table width='600' cellpadding='0' cellspacing='0' style='background-color:#ffffff;border-radius:6px;overflow:hidden;'>
+
+                        <!-- HEADER -->
+                        <tr>
+                        <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
+                            Reporte Mensual Enero
                         </td>
                         </tr>
 
