@@ -243,8 +243,8 @@ namespace McpaApi.Services
                 var htmlPuntoSur = this.GenerateMonthHtml(resultPuntoSur, "PUNTO SUR");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
+                    "molina@garage290.mx",
+                    //"juan_rivera99@hotmail.com",
                     "Reporte de ventas Mensual Enero PUNTO SUR",
                     htmlPuntoSur
                 );
@@ -252,8 +252,8 @@ namespace McpaApi.Services
                 var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
+                    "molina@garage290.mx",
+                    //"juan_rivera99@hotmail.com",
                     "Reporte de ventas Mensual Enero AGUA AZUL",
                     htmlAguaAzul
                 );
@@ -261,8 +261,8 @@ namespace McpaApi.Services
                 var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA");
 
                 await _emailService.SendEmailAsync(
-                    //"molina@garage290.mx",
-                    "juan_rivera99@hotmail.com",
+                    "molina@garage290.mx",
+                    //"juan_rivera99@hotmail.com",
                     "Reporte de ventas Mensual Enero PATRIA",
                     htmlPatria
                 );
