@@ -34,9 +34,9 @@ namespace McpaApi.Services
             try
             {
                 var today = DateOnly.FromDateTime(DateTime.Now);
-                //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
+                //var today = DateOnly.FromDateTime(new DateTime(2026, 06, 2));
                 var initDate = new DateOnly(today.Year, today.Month, 1);
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
 
                 IEnumerable<ReportSales> resultAguaAzul = _aguaAzulService.SaleReport(new Models.Dto.DownloadReportSale()
                 {
@@ -130,7 +130,7 @@ namespace McpaApi.Services
                     //"juan_rivera99@hotmail.com",
                     "Reporte de ventas",
                     html,
-                    ["garage290mx@gmail.com", "cord@garage290.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
                 
                 _logger.LogInformation("ReportJob completado correctamente");
@@ -152,7 +152,7 @@ namespace McpaApi.Services
                 var today = new DateOnly(2025, 12, 31);
                 //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
                 var initDate = new DateOnly(today.Year, 1, 1);
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
 
                 ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
                 {
@@ -215,10 +215,17 @@ namespace McpaApi.Services
 
             try
             {
-                var today = new DateOnly(2026, 1, 31);
-                //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
-                var initDate = new DateOnly(2026, 1, 1);
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
+                var now = DateTime.Now;
+                var lastDayPreviousMonth = now.Date.AddDays(-now.Day);
+                var firstDayPreviousMonth = new DateOnly(
+                    lastDayPreviousMonth.Year,
+                    lastDayPreviousMonth.Month,
+                    1
+                );
+
+                var today = DateOnly.FromDateTime(lastDayPreviousMonth);
+                var initDate = firstDayPreviousMonth;
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
 
                 ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
                 {
@@ -245,8 +252,9 @@ namespace McpaApi.Services
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Enero PUNTO SUR",
-                    htmlPuntoSur
+                    "Reporte de ventas Mensual Mayo PUNTO SUR",
+                    htmlPuntoSur,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
 
                 var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL");
@@ -254,8 +262,9 @@ namespace McpaApi.Services
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Enero AGUA AZUL",
-                    htmlAguaAzul
+                    "Reporte de ventas Mensual Mayo AGUA AZUL",
+                    htmlAguaAzul,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
 
                 var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA");
@@ -263,8 +272,9 @@ namespace McpaApi.Services
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Enero PATRIA",
-                    htmlPatria
+                    "Reporte de ventas Mensual Mayo PATRIA",
+                    htmlPatria,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
                 
                 _logger.LogInformation("ReportMonth completado correctamente");
@@ -457,7 +467,7 @@ namespace McpaApi.Services
                         <!-- HEADER -->
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
-                            Reporte Mensual Enero
+                            Reporte Mensual Mayo
                         </td>
                         </tr>
 
@@ -941,7 +951,7 @@ namespace McpaApi.Services
             var objectives = new Dictionary<string, List<int>>();
             objectives.Add("José Daniel", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
             objectives.Add("Cristian Sanchez", [742000,742000,742000,838000,838000,838000,838000,742000,838000,838000,646000,838000]);
-            objectives.Add("Barbara Sandoval", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
+            objectives.Add("Paola Olvera", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
             
             var totalObjective = 0; //objective * sellers.Count();
 

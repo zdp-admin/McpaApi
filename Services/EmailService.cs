@@ -1,9 +1,8 @@
 using McpaApi.Jobs;
 using McpaApi.Models;
 using Microsoft.Extensions.Options;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace McpaApi.Services
 {
@@ -20,39 +19,40 @@ namespace McpaApi.Services
 
         public async Task SendEmailAsync(string to, string subject, string body, IEnumerable<string>? ccs = null)
         {
-            var client = new SmtpClient(_settings.SmtpServer, _settings.Port)
-            {
-                Credentials = new NetworkCredential(_settings.Username, _settings.Password),
-                EnableSsl = true
-            };
-
-            var message = new MailMessage
-            {
-                From = new MailAddress(_settings.SenderEmail, _settings.SenderName),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true,
-                BodyEncoding = Encoding.UTF8,
-                SubjectEncoding = Encoding.UTF8
-            };
-
-            message.To.Add(to);
-
-            if (ccs != null)
-            {
-                foreach (string cc in ccs)
-                {
-                    message.To.Add(cc);
-                }
-            }
-
             try
             {
-                await client.SendMailAsync(message);
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(_settings.SenderName, _settings.SenderEmail));
+                message.To.Add(new MailboxAddress("", to));
+                message.Subject = subject;
+
+                message.Body = new TextPart("html")
+                {
+                    Text = body
+                };
+
+                // Copias (CC)
+                if (ccs != null)
+                {
+                    foreach (var cc in ccs)
+                    {
+                        message.Cc.Add(MailboxAddress.Parse(cc));
+                    }
+                }
+
+                using var client = new SmtpClient();
+
+                await client.ConnectAsync(_settings.SmtpServer, _settings.Port, true); // true = SSL
+                await client.AuthenticateAsync(_settings.Username, _settings.Password);
+
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
+
                 _logger.LogInformation("Correo enviado con éxito");
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 _logger.LogError(ex, $"Error al enviar correo: {ex.Message}");
             }
         }
