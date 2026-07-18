@@ -34,7 +34,7 @@ namespace McpaApi.Services
             try
             {
                 var today = DateOnly.FromDateTime(DateTime.Now);
-                //var today = DateOnly.FromDateTime(new DateTime(2026, 06, 2));
+                //var today = DateOnly.FromDateTime(new DateTime(2026, 7, 8));
                 var initDate = new DateOnly(today.Year, today.Month, 1);
                 var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
 
@@ -123,14 +123,13 @@ namespace McpaApi.Services
                     }
                 }
 
-                var html = this.GenerateHtml(todayResult, monthResult);
+                var html = this.GenerateHtml(todayResult, monthResult, today.ToDateTime(TimeOnly.MinValue));
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    //"juan_rivera99@hotmail.com",
                     "Reporte de ventas",
                     html,
-                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
                 
                 _logger.LogInformation("ReportJob completado correctamente");
@@ -226,6 +225,7 @@ namespace McpaApi.Services
                 var today = DateOnly.FromDateTime(lastDayPreviousMonth);
                 var initDate = firstDayPreviousMonth;
                 var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
+                string nombreMes = initDate.ToString("MMMM", new CultureInfo("es-MX")).ToUpper();
 
                 ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
                 {
@@ -247,32 +247,32 @@ namespace McpaApi.Services
                 });
 
 
-                var htmlPuntoSur = this.GenerateMonthHtml(resultPuntoSur, "PUNTO SUR");
+                var htmlPuntoSur = this.GenerateMonthHtml(resultPuntoSur, "PUNTO SUR", nombreMes);
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Mayo PUNTO SUR",
+                    $"Reporte de ventas Mensual {nombreMes} PUNTO SUR",
                     htmlPuntoSur,
                     ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
 
-                var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL");
+                var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL", nombreMes);
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Mayo AGUA AZUL",
+                    $"Reporte de ventas Mensual {nombreMes} AGUA AZUL",
                     htmlAguaAzul,
                     ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
 
-                var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA");
+                var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA", nombreMes);
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
                     //"juan_rivera99@hotmail.com",
-                    "Reporte de ventas Mensual Mayo PATRIA",
+                    $"Reporte de ventas Mensual {nombreMes} PATRIA",
                     htmlPatria,
                     ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
                 );
@@ -446,7 +446,7 @@ namespace McpaApi.Services
             return html;
         }
 
-        private string GenerateMonthHtml(ReportSalesYear reportSalesYear, string company)
+        private string GenerateMonthHtml(ReportSalesYear reportSalesYear, string company, string month)
         {
             var html = @$"
                 <!DOCTYPE html>
@@ -467,7 +467,7 @@ namespace McpaApi.Services
                         <!-- HEADER -->
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
-                            Reporte Mensual Mayo
+                            Reporte Mensual {month}
                         </td>
                         </tr>
 
@@ -605,9 +605,8 @@ namespace McpaApi.Services
             return html;
         }
 
-        private string GenerateHtml(List<ReportSocialSale> todayResult, List<ReportSocialSale> monthResult)
+        private string GenerateHtml(List<ReportSocialSale> todayResult, List<ReportSocialSale> monthResult, DateTime today)
         {
-            var today = DateTime.Now;
             var sellers = monthResult.Select(s => s.Seller.Trim()).Distinct().ToArray();
             var totalsByKey = todayResult
             .GroupBy(s => $"{s.Seller}{s.Portal}")
@@ -693,7 +692,7 @@ namespace McpaApi.Services
 
                 <table style='border-collapse: collapse;'>
                     <tr>
-                    <td><img style='background-color: black;border-radius: 5px;width: 130px;' src='https://garage290.com.mx/cdn/shop/files/Garage-1_300x.png?v=1615321310'/>   </td>
+                    <td><img style='background-color: black;border-radius: 5px;width: 130px;' src='https://www.garage290.mx/wp-content/uploads/2025/09/Garage-1_300x.avif'/>   </td>
                     <td><p style='width: 60px'></p></td>
                     <td><h2 style='margin: 0px;margin-bottom: 4px;'>Reporte de ventas de redes sociales</h2></td>
                     </tr>
