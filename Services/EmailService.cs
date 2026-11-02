@@ -41,7 +41,7 @@ namespace McpaApi.Services
                 }
 
                 using var client = new SmtpClient();
-
+                client.CheckCertificateRevocation = false;
                 await client.ConnectAsync(_settings.SmtpServer, _settings.Port, MailKit.Security.SecureSocketOptions.StartTls); // true = SSL
                 await client.AuthenticateAsync(_settings.Username, _settings.Password);
 

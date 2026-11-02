@@ -106,7 +106,7 @@ namespace McpaApi.Controllers
       return Ok(true);
     }
 
-    [HttpGet("MontSellerJob")]
+    [HttpPost("MontSellerJob")]
     public async Task<IActionResult> MonthSellerJob()
     {
       await _reportService.ReportMonth();

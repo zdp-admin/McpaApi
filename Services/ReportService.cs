@@ -33,10 +33,10 @@ namespace McpaApi.Services
 
             try
             {
+                //var today = DateOnly.FromDateTime(new DateTime(2026, 10, 26));
                 var today = DateOnly.FromDateTime(DateTime.Now);
-                //var today = DateOnly.FromDateTime(new DateTime(2026, 7, 8));
                 var initDate = new DateOnly(today.Year, today.Month, 1);
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
 
                 IEnumerable<ReportSales> resultAguaAzul = _aguaAzulService.SaleReport(new Models.Dto.DownloadReportSale()
                 {
@@ -129,7 +129,7 @@ namespace McpaApi.Services
                     "molina@garage290.mx",
                     "Reporte de ventas",
                     html,
-                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx", "direccion.gg@garage290.mx"]
                 );
                 
                 _logger.LogInformation("ReportJob completado correctamente");
@@ -148,10 +148,9 @@ namespace McpaApi.Services
 
             try
             {
-                var today = new DateOnly(2025, 12, 31);
-                //var today = DateOnly.FromDateTime(new DateTime(2025, 10, 13));
+                var today = new DateOnly(2026, 12, 31);
                 var initDate = new DateOnly(today.Year, 1, 1);
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
 
                 ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
                 {
@@ -177,24 +176,27 @@ namespace McpaApi.Services
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    "Reporte de ventas anual 2025 PUNTO SUR",
-                    htmlPuntoSur
+                    "Reporte de ventas anual 2026 PUNTO SUR",
+                    htmlPuntoSur,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
 
                 var htmlAguaAzul = this.GenerateYearHtml(resultAguaAzul, "AGUA AZUL");
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    "Reporte de ventas anual 2025 AGUA AZUL",
-                    htmlAguaAzul
+                    "Reporte de ventas anual 2026 AGUA AZUL",
+                    htmlAguaAzul,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
 
                 var htmlPatria = this.GenerateYearHtml(resultPatria, "PATRIA");
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    "Reporte de ventas anual 2025 PATRIA",
-                    htmlPatria
+                    "Reporte de ventas anual 2026 PATRIA",
+                    htmlPatria,
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
                 
                 _logger.LogInformation("ReportYearJob completado correctamente");
@@ -210,11 +212,10 @@ namespace McpaApi.Services
 
         public async Task<ReportSalesYear> ReportMonth()
         {
-            _logger.LogInformation("Iniciando Reporte Mensual a las {Time}", DateTime.Now);
-
             try
             {
-                var now = DateTime.Now;
+                var now = new DateTime(2026, 9, 1);
+                //var now = DateTime.Now;
                 var lastDayPreviousMonth = now.Date.AddDays(-now.Day);
                 var firstDayPreviousMonth = new DateOnly(
                     lastDayPreviousMonth.Year,
@@ -224,8 +225,10 @@ namespace McpaApi.Services
 
                 var today = DateOnly.FromDateTime(lastDayPreviousMonth);
                 var initDate = firstDayPreviousMonth;
-                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Paola Olvera"]);
+                var onlySellers = new List<string>(["José Daniel", "Cristian Sanchez", "Barbara Sandoval"]);
                 string nombreMes = initDate.ToString("MMMM", new CultureInfo("es-MX")).ToUpper();
+
+                _logger.LogInformation("Iniciando Reporte Mensual a las {Time} - Periodo: {initDate} - {today}", DateTime.Now, initDate, today);
 
                 ReportSalesYear resultAguaAzul = _aguaAzulService.SalesYearReport(new Models.Dto.DownloadReportSale()
                 {
@@ -251,30 +254,27 @@ namespace McpaApi.Services
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    //"juan_rivera99@hotmail.com",
                     $"Reporte de ventas Mensual {nombreMes} PUNTO SUR",
                     htmlPuntoSur,
-                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
 
                 var htmlAguaAzul = this.GenerateMonthHtml(resultAguaAzul, "AGUA AZUL", nombreMes);
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    //"juan_rivera99@hotmail.com",
                     $"Reporte de ventas Mensual {nombreMes} AGUA AZUL",
                     htmlAguaAzul,
-                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
 
                 var htmlPatria = this.GenerateMonthHtml(resultPatria, "PATRIA", nombreMes);
 
                 await _emailService.SendEmailAsync(
                     "molina@garage290.mx",
-                    //"juan_rivera99@hotmail.com",
                     $"Reporte de ventas Mensual {nombreMes} PATRIA",
                     htmlPatria,
-                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx"]
+                    ["garage290mx@gmail.com", "mercadotecnia@garage290.mx", "jrivera@zonadeprivilegios.com.mx"]
                 );
                 
                 _logger.LogInformation("ReportMonth completado correctamente");
@@ -287,6 +287,7 @@ namespace McpaApi.Services
                 throw;
             }
         }
+        
         private string GenerateYearHtml(ReportSalesYear reportSalesYear, string company)
         {
             var html = @$"
@@ -308,7 +309,7 @@ namespace McpaApi.Services
                         <!-- HEADER -->
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
-                            Reporte Anual 2025
+                            Reporte Anual 2026
                         </td>
                         </tr>
 
@@ -371,9 +372,16 @@ namespace McpaApi.Services
                                 <td align='right'>% Penetración</td>
                             </tr>";
 
-                           foreach (var item in reportSalesYear.SalesWithAdditionals)
+                            var totalOrders = reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders);
+                            double totalPentration = 0;
+
+                            foreach (var item in reportSalesYear.SalesWithAdditionals)
                             {
-                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
+                                var totalOrderBySeller = reportSalesYear.SalesWithoutAdditionals?.Where(sw => sw.Seller == item.Seller).FirstOrDefault()?.Orders ?? 0;
+                                double penetration = (double)item.Orders / (totalOrders - totalOrderBySeller) * 100;
+                                totalPentration += penetration;
+
+                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{penetration.ToString("F2")}%</td></tr>";
                             } 
 
 
@@ -384,7 +392,7 @@ namespace McpaApi.Services
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts)}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.TotalAdditional).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.AvgTicket).ToString("C")}</td>
-                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.PercentPenetration).ToString("F2")}%</td>
+                                <td align='right'>{totalPentration.ToString("F2")}%</td>
                             </tr>
                             </table>
                         </td>
@@ -467,7 +475,7 @@ namespace McpaApi.Services
                         <!-- HEADER -->
                         <tr>
                         <td style='background-color:#111827;color:#ffffff;padding:16px;text-align:center;font-size:20px;font-weight:bold;'>
-                            Reporte Mensual {month}
+                            Reporte Mensual {company} - {month} 
                         </td>
                         </tr>
 
@@ -530,9 +538,15 @@ namespace McpaApi.Services
                                 <td align='right'>% Penetración</td>
                             </tr>";
 
+                            var totalOrders = reportSalesYear.SalesWithoutAdditionals.Sum(x => x.Orders);
+                            double totalPentration = 0;
+
                            foreach (var item in reportSalesYear.SalesWithAdditionals)
                             {
-                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{item.PercentPenetration.ToString("F2")}%</td></tr>";
+                                var totalOrderBySeller = reportSalesYear.SalesWithoutAdditionals?.Where(sw => sw.Seller == item.Seller).FirstOrDefault()?.Orders ?? 0;
+                                double penetration = (double)item.Orders / (totalOrders - totalOrderBySeller) * 100;
+                                totalPentration += penetration;
+                                html += @$"<tr><td>{item.Seller}</td><td align='right'>{item.Orders}</td><td align='right'>{item.ExtraProducts}</td><td align='right'>{item.TotalAdditional.ToString("C")}</td><td align='right'>{item.AvgTicket.ToString("C")}</td><td align='right'>{penetration.ToString("F2")}%</td></tr>";
                             } 
 
 
@@ -543,7 +557,7 @@ namespace McpaApi.Services
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.ExtraProducts)}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.TotalAdditional).ToString("C")}</td>
                                 <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.AvgTicket).ToString("C")}</td>
-                                <td align='right'>{reportSalesYear.SalesWithAdditionals.Sum(x => x.PercentPenetration).ToString("F2")}%</td>
+                                <td align='right'>{totalPentration.ToString("F2")}%</td>
                             </tr>
                             </table>
                         </td>
@@ -950,7 +964,7 @@ namespace McpaApi.Services
             var objectives = new Dictionary<string, List<int>>();
             objectives.Add("José Daniel", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
             objectives.Add("Cristian Sanchez", [742000,742000,742000,838000,838000,838000,838000,742000,838000,838000,646000,838000]);
-            objectives.Add("Paola Olvera", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
+            objectives.Add("Barbara Sandoval", [463667,526333,526333,589000,589000,589000,589000,463667,589000,589000,463667,589000]);
             
             var totalObjective = 0; //objective * sellers.Count();
 

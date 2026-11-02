@@ -10,16 +10,19 @@ namespace McpaApi.Services
 {
   public class ShopGarageService
   {
+    private readonly ILogger<ShopGarageService> _logger;
     protected readonly ShopGarageDbContext _context;
     protected readonly GarageCommercialDbContext _commercialContext;
 
     public ShopGarageService(
       ShopGarageDbContext context,
-      GarageCommercialDbContext garageCommercialDbContext
+      GarageCommercialDbContext garageCommercialDbContext,
+      ILogger<ShopGarageService> logger
     )
     {
       _context = context;
       _commercialContext = garageCommercialDbContext;
+      _logger = logger;
     }
 
     public IEnumerable<Sales> GetSales()
@@ -118,6 +121,8 @@ namespace McpaApi.Services
       var invoicesIds = sales.Select(s => s.Invoice!.AdminpaqId).ToList();
       var invoicesSet = new HashSet<int>(invoicesIds!);
       var documents = _commercialContext.Documents.Include(d => d.Movements).Where(d => invoicesSet.Contains(d.Id)).ToList();
+      var totalOmitidos = 0;
+
 
       foreach (var sale in sales)
       {
@@ -125,9 +130,20 @@ namespace McpaApi.Services
         var invoiceIsCancel = payed?.Cancelado == 1;
         var pending = payed?.Pendiente > 10;
 
-        if (payed == null || invoiceIsCancel || pending)
+        if (payed == null) // || invoiceIsCancel || pending)
         {
+          totalOmitidos += 1;
           continue;
+        }
+
+        double total = 0;
+        var saleElements =  sale.SaleElements.Where(se => se.Product.Code.ToLower() != "anticipo").ToList();
+
+        foreach (var product in saleElements)
+        {
+          var productInDocument = payed.Movements.Where(m => m.IdProducto == product.Product.AdminpaqId).FirstOrDefault();
+          var totalComercial = productInDocument?.Total ?? 0;
+          total += totalComercial / 1.16;
         }
 
         result.Orders += 1;
@@ -137,7 +153,7 @@ namespace McpaApi.Services
         if (isAditional)
         {
           result.OrdersWithAdditionals += 1;
-          result.TotalSalesWithAdditionals += sale.Total;
+          result.TotalSalesWithAdditionals += total;
           var seller = result.SalesWithAdditionals.FirstOrDefault(s => s.Seller == sellerName);
 
 
@@ -147,8 +163,8 @@ namespace McpaApi.Services
             var totalSaleOrdes = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == seller.Seller).FirstOrDefault()?.Orders ?? 0;
 
             seller.Orders++;
-            seller.ExtraProducts += sale.SaleElements.Count();
-            seller.TotalAdditional += sale.Total;
+            seller.ExtraProducts += saleElements.Count();
+            seller.TotalAdditional += total;
             seller.AvgTicket = seller.TotalAdditional / seller.Orders;
             seller.PercentPenetration = (double)seller.Orders / (totalOrder - totalSaleOrdes) * 100;
           }
@@ -158,22 +174,22 @@ namespace McpaApi.Services
             {
               Seller = $"{sale.User.Name} {sale.User.LastName}",
               Orders = 1,
-              ExtraProducts = sale.SaleElements.Count(),
-              TotalAdditional = sale.Total,
-              AvgTicket = sale.Total,
+              ExtraProducts = saleElements.Count(),
+              TotalAdditional = total,
+              AvgTicket = total,
               PercentPenetration = 0
             });
           }
         }
         else
         {
-          result.TotalSalesWithoutAdditionals += sale.Total;
+          result.TotalSalesWithoutAdditionals += total;
           var seller = result.SalesWithoutAdditionals!.FirstOrDefault(s => s.Seller == sellerName);
 
           if (seller != null)
           {
               seller.Orders++;
-              seller.TotalSales += sale.Total;
+              seller.TotalSales += total;
               seller.AvgTicket = seller.TotalSales / seller.Orders;
           }
           else
@@ -183,13 +199,15 @@ namespace McpaApi.Services
                   {
                       Seller = sellerName,
                       Orders = 1,
-                      TotalSales = sale.Total,
-                      AvgTicket = sale.Total / 1 // o 0, según tu regla de negocio
+                      TotalSales = total,
+                      AvgTicket = total / 1 // o 0, según tu regla de negocio
                   });
           }
         }
       }
       result.PercentPenetrationTotal = result.Orders > 0 ? (double)result.OrdersWithAdditionals / result.Orders * 100 : 0;
+
+      _logger.LogInformation("Total Omitidos {totalOmitidos} - {totalOrders}", totalOmitidos, result.Orders);
 
       return result;
     }

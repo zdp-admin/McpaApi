@@ -124,9 +124,19 @@ namespace McpaApi.Services
         var invoiceIsCancel = payed?.Cancelado == 1;
         var pending = payed?.Pendiente > 10;
 
-        if (payed == null || invoiceIsCancel || pending)
+        if (payed == null) // || invoiceIsCancel || pending)
         {
           continue;
+        }
+
+        double total = 0;
+
+        var saleElements =  sale.SaleElements.Where(se => se.Product.Code.ToLower() != "anticipo").ToList();
+        foreach (var product in saleElements)
+        {
+          var productInDocument = payed.Movements.Where(m => m.IdProducto == product.Product.AdminpaqId).FirstOrDefault();
+          var totalComercial = productInDocument?.Total ?? 0;
+          total += totalComercial / 1.16;
         }
 
         result.Orders += 1;
@@ -136,7 +146,7 @@ namespace McpaApi.Services
         if (isAditional)
         {
           result.OrdersWithAdditionals += 1;
-          result.TotalSalesWithAdditionals += sale.Total;
+          result.TotalSalesWithAdditionals += total;
           var seller = result.SalesWithAdditionals.FirstOrDefault(s => s.Seller == sellerName);
 
 
@@ -146,8 +156,8 @@ namespace McpaApi.Services
             var totalSaleOrdes = result.SalesWithoutAdditionals?.Where(sw => sw.Seller == seller.Seller).FirstOrDefault()?.Orders ?? 0;
 
             seller.Orders++;
-            seller.ExtraProducts += sale.SaleElements.Count();
-            seller.TotalAdditional += sale.Total;
+            seller.ExtraProducts += saleElements.Count();
+            seller.TotalAdditional += total;
             seller.AvgTicket = seller.TotalAdditional / seller.Orders;
             seller.PercentPenetration = (double)seller.Orders / (totalOrder - totalSaleOrdes) * 100;
           }
@@ -157,22 +167,22 @@ namespace McpaApi.Services
             {
               Seller = $"{sale.User.Name} {sale.User.LastName}",
               Orders = 1,
-              ExtraProducts = sale.SaleElements.Count(),
-              TotalAdditional = sale.Total,
-              AvgTicket = sale.Total,
+              ExtraProducts = saleElements.Count(),
+              TotalAdditional = total,
+              AvgTicket = total,
               PercentPenetration = 0
             });
           }
         }
         else
         {
-          result.TotalSalesWithoutAdditionals += sale.Total;
+          result.TotalSalesWithoutAdditionals += total;
           var seller = result.SalesWithoutAdditionals!.FirstOrDefault(s => s.Seller == sellerName);
 
           if (seller != null)
           {
               seller.Orders++;
-              seller.TotalSales += sale.Total;
+              seller.TotalSales += total;
               seller.AvgTicket = seller.TotalSales / seller.Orders;
           }
           else
@@ -182,8 +192,8 @@ namespace McpaApi.Services
                   {
                       Seller = sellerName,
                       Orders = 1,
-                      TotalSales = sale.Total,
-                      AvgTicket = sale.Total / 1 // o 0, según tu regla de negocio
+                      TotalSales = total,
+                      AvgTicket = total / 1 // o 0, según tu regla de negocio
                   });
           }
         }
